@@ -27,7 +27,10 @@ private:
 public:
     NDNHelper();
     void initNDN(string configFilePath);
-    void start();
+   // void start();
+    void start1();
+    void start2();
+    void process();
     void join();
     void bindCacheHelper(CacheHelper* cacheHelper);
     void expressInterest(string name, bool isPre = true);

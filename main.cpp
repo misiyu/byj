@@ -7,10 +7,24 @@
 
 using namespace std;
 
-void dealNDN(void *arg) {
+void dealNDN1(void *arg) {
     auto *ndnHelper = (NDNHelper *) arg;
-    ndnHelper->start();
+    //cout<<"dealNDN1 success"<<endl;
+    ndnHelper->start1();
 }
+
+void dealNDN2(void *arg) {
+    auto *ndnHelper = (NDNHelper *) arg;
+    //cout<<"dealNDN2 success"<<endl;
+    ndnHelper->start2();
+}
+
+void process(void *arg) {
+    auto *ndnHelper = (NDNHelper *) arg;
+    //cout<<"dealNDN2 success"<<endl;
+    ndnHelper->process();
+}
+
 int main(int argc, char *argv[]) {
 
     NDNHelper ndnHelper;
@@ -24,11 +38,15 @@ int main(int argc, char *argv[]) {
 
     ndnHelper.initNDN(argv[1]);
 
-    boost::thread t(bind(&dealNDN, &ndnHelper));
+    boost::thread t(bind(&dealNDN1, &ndnHelper));
+    boost::thread y(bind(&dealNDN2, &ndnHelper));
+    boost::thread u(bind(&process, &ndnHelper));
 
     libPcapHelper.initLibPcap(argv[1]);
 
     t.join();
+    y.join();
+    u.join();
     libPcapHelper.join();
     ndnHelper.join();
     libPcapHelper.close();

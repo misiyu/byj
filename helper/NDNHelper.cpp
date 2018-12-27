@@ -14,20 +14,46 @@ NDNHelper::NDNHelper(): face("localhost") {
     cout << "NDN Helper constructor" << endl;
 }
 
-void NDNHelper::start() {
+void NDNHelper::process()  {
+    while(1) {
+         face.processEvents();
+         usleep(5);
+    }
+}
+
+void NDNHelper::start1() {
     cout << "registerIp: " << registerIp << endl;
     Name register_prefix1(NDNHelper::PREFIX_PRE_REQUEST + "/" + this->registerIp);
-    Name register_prefix2(NDNHelper::PREFIX_REQUEST_DATA + "/" + this->registerIp);
+    //Name register_prefix2(NDNHelper::PREFIX_REQUEST_DATA + "/" + this->registerIp);
 
     Interest::setDefaultCanBePrefix(true);
     try {
         face.setInterestFilter(InterestFilter(register_prefix1), (const InterestCallback &) bind(&NDNHelper::onInterest, this, _1, _2, true),
                                (const RegisterPrefixFailureCallback&) bind(&NDNHelper::onRegisterFailed, this, _1));
 
+       // face.setInterestFilter(InterestFilter(register_prefix2), (const InterestCallback &) bind(&NDNHelper::onInterest, this, _1, _2,
+       //                                                                                          false),
+                              // (const RegisterPrefixFailureCallback&) bind(&NDNHelper::onRegisterFailed, this, _1));
+       // face.processEvents();
+    } catch (exception &e) {
+        std::cerr << "ERROR: " << e.what() << std::endl;
+    }
+}
+
+void NDNHelper::start2() {
+    cout << "registerIp: " << registerIp << endl;
+    //Name register_prefix1(NDNHelper::PREFIX_PRE_REQUEST + "/" + this->registerIp);
+    Name register_prefix2(NDNHelper::PREFIX_REQUEST_DATA + "/" + this->registerIp);
+
+    Interest::setDefaultCanBePrefix(true);
+    try {
+        //face.setInterestFilter(InterestFilter(register_prefix1), (const InterestCallback &) bind(&NDNHelper::onInterest, this, _1, _2, true),
+                              // (const RegisterPrefixFailureCallback&) bind(&NDNHelper::onRegisterFailed, this, _1));
+//
         face.setInterestFilter(InterestFilter(register_prefix2), (const InterestCallback &) bind(&NDNHelper::onInterest, this, _1, _2,
                                                                                                  false),
                                (const RegisterPrefixFailureCallback&) bind(&NDNHelper::onRegisterFailed, this, _1));
-        face.processEvents();
+       // face.processEvents();
     } catch (exception &e) {
         std::cerr << "ERROR: " << e.what() << std::endl;
     }
